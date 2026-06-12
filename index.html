@@ -696,7 +696,7 @@ function logout() {
 setInterval(() => {
   const t = sessionStorage.getItem("loginTime");
   if (t && Date.now() - t > SESSION_DURATION) logout();
-}, 60000);
+}, 300000);
 
 // ── ALGO CODE ACTIVATION ────────────────────────────────
 function shortPeriod(period) {
@@ -807,16 +807,12 @@ async function generateCode() {
 
 Merci pour votre abonnement SAMA COMMERCE 🛒
 
-Pour activer votre licence :
-1. Ouvrez SAMA COMMERCE
-2. Allez dans *Menu > Licence*
-3. Entrez le code que vous allez recevoir
-4. Appuyez sur *Activer*
-
 📋 Plan : ${planLabel}
 💰 Montant : ${price} FCFA
 📅 Valable jusqu'au : ${expiry}
 💳 Paiement : ${payLabel}
+
+Votre code d'activation vous sera envoyé dans le prochain message.
 
 Merci de votre confiance 🙏
 _Support : répondez à ce message_`;
@@ -831,7 +827,7 @@ _Support : répondez à ce message_`;
   window._genPhone = phone.replace(/\s/g,"");
   document.getElementById("resultSection").scrollIntoView({behavior:"smooth"});
 
-  showToast("Code genere ! Retour dans 8s...");
+  showToast("Code genere !");
   setTimeout(() => {
     ["genName","genPhone","genDeviceId","genNotes"].forEach(id => document.getElementById(id).value = "");
     document.getElementById("genPlan").value = "monthly";
@@ -842,7 +838,7 @@ _Support : répondez à ce message_`;
     document.getElementById("page-dashboard").classList.add("active");
     document.querySelectorAll(".nav-btn")[0].classList.add("active");
     refreshDashboard(); window.scrollTo({top:0,behavior:"smooth"});
-  }, 8000);
+  }, 300000);
 }
 
 function copyCode() { navigator.clipboard.writeText(window._genCode).then(() => showToast("Code copie")); }
