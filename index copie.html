@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Content-Security-Policy"
+content="default-src 'self' https://api.qrserver.com; img-src 'self' data: https://api.qrserver.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+<title>Sama Commerce — Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:linear-gradient(135deg,#003D1F,#007A3D);min-height:100vh;padding:20px}
+.container{max-width:900px;margin:0 auto}
+.header{text-align:center;padding:30px 0 20px;color:white}
+.header h1{font-size:26px;font-weight:900}
+.header p{font-size:13px;opacity:0.7;margin-top:4px}
+.card{background:white;border-radius:20px;padding:24px;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
+.card h2{font-size:16px;font-weight:800;color:#003D1F;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+label{display:block;font-size:12px;font-weight:700;color:#5C6B62;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid #E8D5A0;border-radius:11px;font-size:14px;margin-bottom:12px;outline:none;transition:border 0.2s;background:#FFFDF5}
+input:focus,select:focus,textarea:focus{border-color:#007A3D;background:white}
+.btn{padding:11px 20px;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{opacity:0.88;transform:translateY(-1px)}
+.btn-green{background:linear-gradient(135deg,#007A3D,#00A352);color:white}
+.btn-red{background:linear-gradient(135deg,#CE1126,#FF3347);color:white}
+.btn-orange{background:linear-gradient(135deg,#F0C500,#E8A000);color:#3D1A00}
+.btn-blue{background:linear-gradient(135deg,#0050B3,#0080FF);color:white}
+.btn-sm{padding:7px 14px;font-size:12px}
+.btn-full{width:100%;justify-content:center;padding:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.code-box{font-size:20px;font-weight:900;color:#003D1F;letter-spacing:3px;text-align:center;background:#FFF8E6;border:2px dashed #F0C500;padding:14px;border-radius:12px;margin:10px 0}
+.msg-box{background:#F5F5F0;border-radius:10px;padding:12px;font-size:12px;color:#333;white-space:pre-wrap;line-height:1.7;margin-top:8px;border:1px solid #E8D5A0}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-green{background:#E6F7F1;color:#007A3D}
+.badge-red{background:#FFEBE9;color:#CE1126}
+.badge-yellow{background:#FFF8E6;color:#8B6914}
+.badge-blue{background:#EFF6FF;color:#0050B3}
+.alert{padding:11px 14px;border-radius:10px;font-size:13px;font-weight:600;margin-bottom:12px;display:none}
+.alert.show{display:flex;align-items:center;gap:8px}
+.alert-err{background:#FFEBE9;color:#CE1126;border:1px solid #CE1126}
+.alert-ok{background:#E6F7F1;color:#007A3D;border:1px solid #007A3D}
+.alert-warn{background:#FFF8E6;color:#8B6914;border:1px solid #F0C500}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:700;color:#8B6914;text-transform:uppercase;letter-spacing:0.4px;padding:8px 12px;border-bottom:2px solid #F0D890}
+td{padding:10px 12px;border-bottom:1px solid #F5EDD0;font-size:13px;color:#3D1A00;vertical-align:middle}
+tr:hover td{background:#FFFDF5}
+.empty{text-align:center;padding:32px;color:#8B6914;font-size:13px}
+.nav{display:flex;gap:8px;margin-bottom:20px;background:rgba(255,255,255,0.15);padding:6px;border-radius:14px}
+.nav-btn{flex:1;padding:9px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:rgba(255,255,255,0.7);transition:all 0.2s}
+.nav-btn.active{background:white;color:#003D1F}
+.page{display:none}.page.active{display:block}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat{background:linear-gradient(135deg,#003D1F,#007A3D);border-radius:14px;padding:16px;color:white;text-align:center}
+.stat-val{font-size:26px;font-weight:900}
+.stat-lbl{font-size:11px;opacity:0.7;margin-top:2px}
+.search-bar{position:relative;margin-bottom:14px}
+.search-bar input{padding-left:36px;margin-bottom:0}
+.search-bar::before{content:"🔍";position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-right:4px}
+.result-section{display:none}.result-section.show{display:block}
+#loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px}
+.login-card{max-width:420px;width:100%}
+.strength-bar{height:4px;border-radius:2px;margin-top:-8px;margin-bottom:12px;transition:all 0.3s}
+.security-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:8px 14px;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.otp-inputs{display:flex;gap:8px;margin-bottom:16px}
+.otp-inputs input{width:48px;height:52px;text-align:center;font-size:22px;font-weight:900;padding:0;margin:0}
+.attempt-bar{height:4px;background:#E8D5A0;border-radius:2px;margin-bottom:12px;overflow:hidden}
+.attempt-fill{height:100%;background:#CE1126;border-radius:2px;transition:width 0.3s}
+.lock-screen{text-align:center;padding:32px}
+.lock-icon{font-size:48px;margin-bottom:12px}
+.ip-badge{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <div class="security-badge">🔒 Connexion chiffrée — Session sécurisée</div>
+  <div class="card login-card" id="loginCard">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:48px">🏪</div>
+      <h1 style="font-size:20px;font-weight:900;color:#003D1F;margin-top:8px">Sama Commerce Admin</h1>
+      <p style="font-size:12px;color:#8B6914;margin-top:4px">Panneau d administration sécurisé</p>
+    </div>
+
+    <!-- ETAPE 1: Mot de passe -->
+    <div id="step1">
+      <div class="alert alert-err" id="loginErr"></div>
+      <div class="alert alert-warn" id="loginWarn"></div>
+      <div id="lockScreen" class="lock-screen" style="display:none">
+        <div class="lock-icon">🔐</div>
+        <strong style="color:#CE1126">Compte bloque</strong>
+        <p style="font-size:13px;color:#5C6B62;margin-top:8px" id="lockMsg"></p>
+      </div>
+      <div id="loginForm">
+        <div class="attempt-bar"><div class="attempt-fill" id="attemptFill" style="width:0%"></div></div>
+        <label>Mot de passe administrateur</label>
+        <input type="password" id="pwdInput" placeholder="Mot de passe" autocomplete="current-password"
+          onkeypress="if(event.key==='Enter')checkPassword()">
+        <button class="btn btn-green btn-full" onclick="checkPassword()">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- ETAPE 2: TOTP Google Authenticator -->
+    <div id="step2" style="display:none">
+
+      <!-- Premiere utilisation: setup TOTP -->
+      <div id="totpSetup" style="display:none">
+        <div class="alert alert-warn" style="display:flex">
+          🔐 Premiere connexion — Configurez Google Authenticator
+        </div>
+        <p style="font-size:13px;color:#5C6B62;margin-bottom:16px">
+          1. Installez <strong>Google Authenticator</strong> sur votre telephone<br>
+          2. Appuyez sur <strong>+</strong> puis <strong>Scanner un QR code</strong><br>
+          3. Scannez le QR code ci-dessous
+        </p>
+        <div id="qrCode" style="text-align:center;margin:16px 0"></div>
+        <div style="text-align:center;margin-bottom:12px">
+          <p style="font-size:11px;color:#8B6914;margin-bottom:6px">Ou entrez manuellement :</p>
+          <code id="secretDisplay" style="font-size:13px;font-weight:700;color:#003D1F;background:#FFF8E6;padding:8px 12px;border-radius:8px;letter-spacing:2px"></code>
+          <button class="btn btn-sm" style="background:#F0D890;color:#3D1A00;margin-left:8px" onclick="copySecret()">Copier</button>
+        </div>
+        <p style="font-size:12px;color:#CE1126;font-weight:700;text-align:center;margin-bottom:12px">
+          ⚠️ Sauvegardez ce code secret — impossible a recuperer !
+        </p>
+        <button class="btn btn-green btn-full" onclick="confirmSetup()">J ai configure Google Authenticator →</button>
+      </div>
+
+      <!-- Connexion normale TOTP -->
+      <div id="totpVerify" style="display:none">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:36px">📱</div>
+          <p style="font-size:14px;font-weight:700;color:#003D1F;margin-top:8px">Code Google Authenticator</p>
+          <p style="font-size:12px;color:#5C6B62;margin-top:4px">Ouvrez l app et entrez le code a 6 chiffres</p>
+        </div>
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,0)" onkeydown="otpBack(this,event,0)">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,1)" onkeydown="otpBack(this,event,1)">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,2)" onkeydown="otpBack(this,event,2)">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,3)" onkeydown="otpBack(this,event,3)">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,4)" onkeydown="otpBack(this,event,4)">
+          <input type="text" maxlength="1" class="otp-in" inputmode="numeric" oninput="otpMove(this,5)" onkeydown="otpBack(this,event,5)">
+        </div>
+        <div id="totpTimer" style="text-align:center;margin-bottom:12px">
+          <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#8B6914">
+            <span>⏱️ Code valide encore</span>
+            <strong id="timerCount" style="color:#CE1126;font-size:14px">30s</strong>
+          </div>
+          <div style="background:#E8D5A0;border-radius:4px;height:4px;margin-top:6px">
+            <div id="timerBar" style="background:#007A3D;height:4px;border-radius:4px;transition:width 1s linear;width:100%"></div>
+          </div>
+        </div>
+        <div class="alert alert-err" id="otpErr"></div>
+        <button class="btn btn-green btn-full" onclick="checkTotp()">Verifier →</button>
+        <button class="btn btn-full" style="background:#F0D890;color:#3D1A00;margin-top:8px" onclick="backToStep1()">← Retour</button>
+      </div>
+    </div>
+  </div>
+  <div class="ip-badge" id="sessionInfo"></div>
+<button onclick="emergencyReset()" style="background:transparent;border:none;color:rgba(255,255,255,0.3);font-size:10px;cursor:pointer;margin-top:8px">Reset</button>
+</div>
+
+<!-- APP PAGE -->
+<div id="appPage" style="display:none">
+  <div class="container">
+    <div class="header">
+      <h1>🏪 Sama Commerce Admin</h1>
+      <p id="adminInfo">Connecte</p>
+    </div>
+
+    <div class="nav">
+      <button class="nav-btn active" onclick="showPage(event,'dashboard')">📊 Tableau de bord</button>
+      <button class="nav-btn" onclick="showPage(event,'generate')">🔑 Generer code</button>
+      <button class="nav-btn" onclick="showPage(event,'clients')">👥 Clients</button>
+      <button class="nav-btn" onclick="showPage(event,'settings')">⚙️ Parametres</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Clients total</div></div>
+        <div class="stat"><div class="stat-val" id="statActifs">0</div><div class="stat-lbl">Abonnes actifs</div></div>
+        <div class="stat"><div class="stat-val" id="statRevenu">0</div><div class="stat-lbl">FCFA ce mois</div></div>
+      </div>
+      <div class="card">
+        <h2>📋 Derniers codes generes</h2>
+        <div id="recentTable"><div class="empty">Aucun code genere</div></div>
+      </div>
+      <div class="card">
+        <h2>⚠️ Abonnements a renouveler</h2>
+        <div id="renewTable"><div class="empty">Aucun renouvellement imminent</div></div>
+      </div>
+    </div>
+
+    <!-- GENERER CODE -->
+    <div class="page" id="page-generate">
+      <div class="card">
+        <h2>🔑 Generer un code d activation</h2>
+        <div class="alert alert-err" id="genErr"></div>
+        <div class="row">
+          <div><label>Nom du client *</label><input type="text" id="genName" placeholder="Ex: Mamadou Ba"></div>
+          <div><label>Telephone *</label><input type="tel" id="genPhone" placeholder="Ex: 77 123 45 67"></div>
+        </div>
+        <div class="row">
+          <div><label>Plan</label>
+            <select id="genPlan" onchange="toggleYear()">
+              <option value="monthly">Mensuel — 5 000 FCFA</option>
+              <option value="annual">Annuel — 50 000 FCFA</option>
+              <option value="trial15min">Test 15 minutes — Gratuit</option>
+              <option value="trial3h">Test 3 heures — Gratuit</option>
+              <option value="trial1">Test 24 heures — Gratuit</option>
+              <option value="trial5">Test 5 jours — Gratuit</option>
+              <option value="trial10">Test 10 jours — Gratuit</option>
+              <option value="trial15">Test 15 jours — Gratuit</option>
+            </select>
+          </div>
+          <div><label>Paiement</label>
+            <select id="genPayment">
+              <option value="wave">Wave</option>
+              <option value="orange">Orange Money</option>
+              <option value="cash">Cash</option>
+            </select>
+          </div>
+        </div>
+        <div id="yearDiv" style="display:none">
+          <label>Annee abonnement</label>
+          <select id="genYear">
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+          </select>
+        </div>
+        <label>ID telephone * (obligatoire)</label>
+        <input type="text" id="genDeviceId" placeholder="Ex: CP21.260330.005">
+        <label>Notes</label>
+        <textarea id="genNotes" rows="2" style="resize:none" placeholder="Notes..."></textarea>
+        <button class="btn btn-green btn-full" onclick="(async()=>{await generateCode();})()">✨ Generer le code</button>
+      </div>
+      <div class="result-section" id="resultSection">
+        <div class="card">
+          <h2>✅ Code genere</h2>
+          <div class="code-box" id="resultCode"></div>
+          <div class="row">
+            <button class="btn btn-orange" onclick="copyCode()">📋 Copier le code</button>
+            <button class="btn btn-green" onclick="copyMsg()">📱 Copier WhatsApp</button>
+          </div>
+          <div class="msg-box" id="resultMsg"></div>
+          <button class="btn btn-blue btn-full" style="margin-top:12px" onclick="openWhatsApp()">📲 Ouvrir WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h2 style="margin:0">👥 Clients</h2>
+          <button class="btn btn-green btn-sm" onclick="showAddClient()">+ Ajouter</button>
+        </div>
+        <div id="addClientForm" style="display:none;background:#FFFDF5;border:1.5px solid #F0D890;border-radius:14px;padding:16px;margin-bottom:16px">
+          <div class="row">
+            <div><label>Nom *</label><input type="text" id="addName" placeholder="Nom complet"></div>
+            <div><label>Telephone *</label><input type="tel" id="addPhone" placeholder="77 000 00 00"></div>
+          </div>
+          <div class="row">
+            <div><label>Plan</label><select id="addPlan"><option value="monthly">Mensuel</option><option value="annual">Annuel</option><option value="trial15min">Test 15min</option><option value="trial3h">Test 3h</option></select></div>
+            <div><label>Statut</label><select id="addStatus"><option value="active">Actif</option><option value="trial">Essai</option><option value="expired">Expire</option></select></div>
+          </div>
+          <label>Notes</label><input type="text" id="addNote" placeholder="Notes...">
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-green" onclick="addClient()">Sauvegarder</button>
+            <button class="btn" style="background:#F0D890;color:#3D1A00" onclick="hideAddClient()">Annuler</button>
+          </div>
+        </div>
+        <div class="search-bar"><input type="text" id="searchInput" placeholder="Rechercher..." oninput="filterClients()"></div>
+        <div id="clientsTable"></div>
+      </div>
+      <div class="card" id="historyCard" style="display:none">
+        <h2>📋 Historique — <span id="historyName"></span></h2>
+        <div id="historyTable"></div>
+        <button class="btn" style="background:#F0D890;color:#3D1A00;margin-top:12px" onclick="hideHistory()">Fermer</button>
+      </div>
+    </div>
+
+    <!-- PARAMETRES -->
+    <div class="page" id="page-settings">
+      <div class="card">
+        <h2>🔒 Changer le mot de passe</h2>
+        <div class="alert alert-err" id="pwdErr"></div>
+        <div class="alert alert-ok" id="pwdOk"></div>
+        <label>Mot de passe actuel</label><input type="password" id="oldPwd" placeholder="Actuel">
+        <label>Nouveau mot de passe</label><input type="password" id="newPwd" placeholder="Nouveau" oninput="checkStrength()">
+        <div class="strength-bar" id="strengthBar" style="background:#E8D5A0"></div>
+        <div id="strengthLabel" style="font-size:11px;color:#8B6914;margin-bottom:12px"></div>
+        <label>Confirmer</label><input type="password" id="confirmPwd" placeholder="Confirmer">
+        <button class="btn btn-green btn-full" onclick="changePwd()">Mettre a jour</button>
+      </div>
+      <div class="card">
+        <h2>🛡️ Securite</h2>
+        <div style="font-size:13px;color:#5C6B62;line-height:2.2">
+          <div>🔐 Authentification : <strong style="color:#007A3D">Double facteur (2FA)</strong></div>
+          <div>🔑 Mot de passe : <strong style="color:#007A3D">Chiffre PBKDF2</strong></div>
+          <div>⏱️ Session : <strong style="color:#007A3D">Auto-logout 2h</strong></div>
+          <div>🚫 Tentatives : <strong style="color:#007A3D">Blocage apres 5 echecs</strong></div>
+          <div>📊 Clients : <strong id="infoClients" style="color:#3D1A00">0</strong></div>
+          <div>🔑 Codes : <strong id="infoCodes" style="color:#3D1A00">0</strong></div>
+          <div>📅 Mois : <strong id="infoMonth" style="color:#3D1A00"></strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>💾 Donnees</h2>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-green" onclick="exportData()">📤 Exporter</button>
+          <button class="btn btn-blue" onclick="document.getElementById('importFile').click()">📥 Importer</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+          <button class="btn btn-red btn-sm" onclick="clearData()">🗑️ Effacer</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🔑 Google Authenticator</h2>
+        <p style="font-size:12px;color:#5C6B62;margin-bottom:12px">
+          Si vous avez perdu acces a Google Authenticator, reinitializez ici.
+        </p>
+        <button class="btn btn-red btn-sm" onclick="resetTotp()">🔄 Reinitialiser TOTP</button>
+      </div>
+      <div class="card">
+        <h2>🚪 Session</h2>
+        <p style="font-size:12px;color:#5C6B62;margin-bottom:12px" id="sessionDetail"></p>
+        <button class="btn btn-red" onclick="logout()">Se deconnecter</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── CONSTANTES ─────────────────────────────────────────
+// Salt dispersé identique au Dart
+const _s1="S4M",_s2="A_C",_s3="0M3",_s4="RC3",_s5="_2K",_s6="26X";
+const SALT = _s1+_s2+_s3+_s4+_s5+_s6;
+const MAX_ATTEMPTS = 5;
+const LOCK_DURATION = 15 * 60 * 1000; // 15 minutes
+const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2h
+const OTP_DURATION = 5 * 60 * 1000; // 5 min
+
+// ── STOCKAGE SECURISE ───────────────────────────────────
+function getData(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } }
+function setData(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+// ── CRYPTO PBKDF2 ───────────────────────────────────────
+async function hashPwd(pwd, saltHex) {
+  const enc = new TextEncoder();
+  const keyMat = await crypto.subtle.importKey("raw", enc.encode(pwd), "PBKDF2", false, ["deriveBits"]);
+  const saltBuf = saltHex ? hexToBuf(saltHex) : crypto.getRandomValues(new Uint8Array(16));
+  const bits = await crypto.subtle.deriveBits(
+    { name: "PBKDF2", hash: "SHA-256", salt: saltBuf, iterations: 100000 }, keyMat, 256);
+  return bufToHex(saltBuf) + ":" + bufToHex(new Uint8Array(bits));
+}
+
+async function verifyPwd(pwd, stored) {
+  const [saltHex] = stored.split(":");
+  const computed = await hashPwd(pwd, saltHex);
+  return computed === stored;
+}
+
+function bufToHex(buf) { return Array.from(buf).map(b => b.toString(16).padStart(2,"0")).join(""); }
+function hexToBuf(hex) { return new Uint8Array(hex.match(/.{2}/g).map(b => parseInt(b,16))); }
+
+// Hash legacy pour migration (ancien mot de passe)
+function hashLegacy(pwd) {
+  let h = 0x9A3C2F1B;
+  const s = pwd + "|SAMA_SALT_2026|" + pwd.length;
+  for (let i = 0; i < s.length; i++) {
+    h = Math.imul(h ^ s.charCodeAt(i), 0x9e3779b9);
+    h = (h << 13) | (h >>> 19);
+  }
+  return (h >>> 0).toString(16).padStart(8,"0") + s.split("").reverse().map(c => c.charCodeAt(0).toString(16)).join("").slice(0,24);
+}
+
+function getLegacyHash() { return "legacy:" + hashLegacy("samaadmin2026"); }
+
+function getPwdHash() { return getData("adminPwdHash", getLegacyHash()); }
+
+function isTotpConfigured() {
+  return !!localStorage.getItem("totpSecret");
+}
+
+function generateSecret(length = 32) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let secret = "";
+
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+
+  for (let i = 0; i < length; i++) {
+    secret += chars[array[i] % chars.length];
+  }
+
+  return secret;
+}
+
+function saveTotpSecret(secret) {
+  localStorage.setItem("totpSecret", secret);
+}
+
+function getTotpSecret() {
+  return localStorage.getItem("totpSecret");
+}
+
+async function generateTotp(secret, time = Date.now()) {
+  const epoch = Math.floor(time / 1000);
+  const counter = Math.floor(epoch / 30);
+
+  const key = base32ToBytes(secret);
+
+  const buffer = new ArrayBuffer(8);
+  const view = new DataView(buffer);
+
+  view.setUint32(4, counter);
+
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    key,
+    { name: "HMAC", hash: "SHA-1" },
+    false,
+    ["sign"]
+  );
+
+  const hmac = await crypto.subtle.sign("HMAC", cryptoKey, buffer);
+  const hmacArray = new Uint8Array(hmac);
+
+  const offset = hmacArray[hmacArray.length - 1] & 0xf;
+
+  const code =
+    ((hmacArray[offset] & 0x7f) << 24) |
+    ((hmacArray[offset + 1] & 0xff) << 16) |
+    ((hmacArray[offset + 2] & 0xff) << 8) |
+    (hmacArray[offset + 3] & 0xff);
+
+  return (code % 1000000).toString().padStart(6, "0");
+}
+function base32ToBytes(base32) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = "";
+  let bytes = [];
+
+  base32 = base32.replace(/=+$/, "");
+
+  for (let i = 0; i < base32.length; i++) {
+    const val = chars.indexOf(base32.charAt(i).toUpperCase());
+    bits += val.toString(2).padStart(5, "0");
+  }
+
+  for (let i = 0; i + 8 <= bits.length; i += 8) {
+    bytes.push(parseInt(bits.substring(i, i + 8), 2));
+  }
+
+  return new Uint8Array(bytes);
+}
+let _timerInterval = null;
+let _totpAttempts = 0;
+// ── OTP GENERATION ──────────────────────────────────────
+let _otpCode = null;
+let _otpExpiry = null;
+let _otpAttempts = 0;
+
+function generateOtp() {
+  _otpCode = String(Math.floor(100000 + Math.random() * 900000));
+  _otpExpiry = Date.now() + OTP_DURATION;
+  _otpAttempts = 0;
+  return _otpCode;
+}
+
+// ── TENTATIVES ET BLOCAGE ───────────────────────────────
+function getAttempts() { return getData("loginAttempts", { count: 0, lockedUntil: 0 }); }
+function setAttempts(data) { setData("loginAttempts", data); }
+
+function isLocked() {
+  const a = getAttempts();
+  if (a.lockedUntil && Date.now() < a.lockedUntil) return a.lockedUntil;
+  return false;
+}
+
+function recordFailedAttempt() {
+  const a = getAttempts();
+  a.count = (a.count || 0) + 1;
+  if (a.count >= MAX_ATTEMPTS) {
+    a.lockedUntil = Date.now() + LOCK_DURATION;
+    a.count = 0;
+  }
+  setAttempts(a);
+  return a;
+}
+
+function resetAttempts() { setData("loginAttempts", { count: 0, lockedUntil: 0 }); }
+
+function updateAttemptBar() {
+  const a = getAttempts();
+  const pct = (a.count / MAX_ATTEMPTS) * 100;
+  document.getElementById("attemptFill").style.width = pct + "%";
+  if (a.count > 0) {
+    showAlert("loginWarn", `⚠️ ${a.count}/${MAX_ATTEMPTS} tentatives echouees`);
+  }
+}
+
+// ── AUTHENTIFICATION ────────────────────────────────────
+function isTotpConfigured() {
+  return !!localStorage.getItem("totpSecret");
+}
+async function checkPassword() {
+  const locked = isLocked();
+  if (locked) {
+    const remaining = Math.ceil((locked - Date.now()) / 60000);
+    showLock(`Compte bloque pour ${remaining} minute(s).`);
+    return;
+  }
+
+  const pwd = document.getElementById("pwdInput").value;
+  if (!pwd) return;
+
+  const stored = getPwdHash();
+  let valid = stored.startsWith("legacy:")
+    ? hashLegacy(pwd) === stored.slice(7)
+    : await verifyPwd(pwd, stored);
+
+  if (valid) {
+    resetAttempts();
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+
+    if (!isTotpConfigured()) {
+      // Premiere fois: generer secret et afficher QR
+      const secret = generateSecret();
+      saveTotpSecret(secret);
+      document.getElementById("totpSetup").style.display = "block";
+      document.getElementById("totpVerify").style.display = "none";
+      document.getElementById("secretDisplay").textContent = secret;
+
+      // Generer QR code
+      const label = encodeURIComponent("Sama Commerce Admin");
+      const issuer = encodeURIComponent("Sama Commerce");
+      const otpauth = `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpauth)}`;
+      document.getElementById("qrCode").innerHTML =
+        `<img src="${qrUrl}" style="border-radius:12px;border:3px solid #007A3D" width="200" height="200">`;
+    } else {
+      // TOTP deja configure
+      document.getElementById("totpSetup").style.display = "none";
+      document.getElementById("totpVerify").style.display = "block";
+      document.querySelectorAll(".otp-in").forEach(i => i.value = "");
+      document.querySelectorAll(".otp-in")[0].focus();
+      startTimer();
+    }
+  } else {
+    const a = recordFailedAttempt();
+    updateAttemptBar();
+    if (a.lockedUntil) showLock("Compte bloque 15 minutes.");
+    else showAlert("loginErr", `❌ Mot de passe incorrect (${a.count}/${MAX_ATTEMPTS})`);
+    document.getElementById("pwdInput").value = "";
+  }
+}
+
+function confirmSetup() {
+  document.getElementById("totpSetup").style.display = "none";
+  document.getElementById("totpVerify").style.display = "block";
+  document.querySelectorAll(".otp-in").forEach(i => i.value = "");
+  document.querySelectorAll(".otp-in")[0].focus();
+  startTimer();
+}
+
+async function checkTotp() {
+  const entered = Array.from(document.querySelectorAll(".otp-in")).map(i => i.value).join("");
+  if (entered.length !== 6) { showAlert("otpErr", "Entrez les 6 chiffres"); return; }
+
+  _totpAttempts++;
+  if (_totpAttempts > 5) { showAlert("otpErr", "Trop de tentatives."); backToStep1(); return; }
+
+  const secret = getTotpSecret();
+  const now = Date.now();
+
+  // Verifier le code actuel ET le precedent (30s window)
+  const codes = await Promise.all([
+    generateTotp(secret, now),
+    generateTotp(secret, now - 30000),
+    generateTotp(secret, now + 30000),
+  ]);
+
+  if (codes.includes(entered)) {
+    clearInterval(_timerInterval);
+    openSession();
+  } else {
+    showAlert("otpErr", `❌ Code incorrect (${_totpAttempts}/5)`);
+    document.querySelectorAll(".otp-in").forEach(i => i.value = "");
+    document.querySelectorAll(".otp-in")[0].focus();
+  }
+}
+
+function openSession() {
+  _totpAttempts = 0;
+  const now = new Date();
+  sessionStorage.setItem("auth", "1");
+  sessionStorage.setItem("loginTime", Date.now());
+  sessionStorage.setItem("loginAt", now.toLocaleString("fr-FR"));
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("appPage").style.display = "block";
+  document.getElementById("adminInfo").textContent = "Admin — " + now.toLocaleString("fr-FR");
+  document.getElementById("infoMonth").textContent =
+    now.toLocaleDateString("fr-FR", {month:"long", year:"numeric"});
+  document.getElementById("sessionDetail").textContent = "Connecte le " + now.toLocaleString("fr-FR");
+  refreshAll();
+}
+
+function startTimer() {
+  clearInterval(_timerInterval);
+  _timerInterval = setInterval(() => {
+    const remaining = 30 - (Math.floor(Date.now() / 1000) % 30);
+    const el = document.getElementById("timerCount");
+    const bar = document.getElementById("timerBar");
+    if (el) el.textContent = remaining + "s";
+    if (bar) bar.style.width = (remaining / 30 * 100) + "%";
+    if (remaining <= 5) { if (el) el.style.color = "#CE1126"; }
+    else { if (el) el.style.color = "#8B6914"; }
+  }, 1000);
+}
+
+function copySecret() {
+  const s = document.getElementById("secretDisplay").textContent;
+  navigator.clipboard.writeText(s).then(() => showToast("Secret copie - Gardez-le precieusement"));
+}
+
+function backToStep1() {
+  clearInterval(_timerInterval);
+  _totpAttempts = 0;
+  document.getElementById("step2").style.display = "none";
+  document.getElementById("step1").style.display = "block";
+  document.getElementById("totpSetup").style.display = "none";
+  document.getElementById("totpVerify").style.display = "none";
+  document.getElementById("pwdInput").value = "";
+  document.querySelectorAll(".otp-in").forEach(i => i.value = "");
+}
+
+// Reset TOTP (si perdu)
+function resetTotp() {
+  if (!confirm("Reinitialiser Google Authenticator ? Vous devrez reconfigurer l app.")) return;
+  localStorage.removeItem("totpSecret");
+  showToast("TOTP reinitialise - Reconnectez-vous");
+  logout();
+}
+
+function showLock(msg) {
+  document.getElementById("loginForm").style.display = "none";
+  document.getElementById("lockScreen").style.display = "block";
+  document.getElementById("lockMsg").textContent = msg;
+
+  // Relancer le compteur
+  const a = getAttempts();
+  if (a.lockedUntil) {
+    const interval = setInterval(() => {
+      const remaining = Math.ceil((a.lockedUntil - Date.now()) / 60000);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        resetAttempts();
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("lockScreen").style.display = "none";
+      } else {
+        document.getElementById("lockMsg").textContent = `Compte bloque - ${remaining} minute(s) restantes`;
+      }
+    }, 10000);
+  }
+}
+
+// Navigation OTP
+function otpMove(el, idx) {
+  if (el.value.length === 1) {
+    const inputs = document.querySelectorAll(".otp-in");
+    if (idx < 5) inputs[idx + 1].focus();
+    else checkTotp();
+  }
+}
+function otpBack(el, e, idx) {
+  if (e.key === "Backspace" && !el.value && idx > 0) {
+    document.querySelectorAll(".otp-in")[idx - 1].focus();
+  }
+}
+
+function logout() {
+  sessionStorage.clear();
+  _otpCode = null;
+  location.reload();
+}
+
+// Auto-logout
+setInterval(() => {
+  const t = sessionStorage.getItem("loginTime");
+  if (t && Date.now() - t > SESSION_DURATION) logout();
+}, 60000);
+
+// ── ALGO CODE ACTIVATION ────────────────────────────────
+function shortPeriod(period) {
+  if (period.startsWith("ANNUAL"))  return "ANNUAL";
+  if (period.startsWith("TRIAL15MIN")) return "TRIAL15MIN";
+  if (period.startsWith("TRIAL15")) return "TRIAL15";
+  if (period.startsWith("TRIAL10")) return "TRIAL10";
+  if (period.startsWith("TRIAL5"))  return "TRIAL5";
+  if (period.startsWith("TRIAL3H")) return "TRIAL3H";
+  if (period.startsWith("TRIAL1"))  return "TRIAL1";
+  if (period.includes("-") && period.length > 7) return period.substring(0, 7);
+  return period;
+}
+
+async function genCode(period) {
+  // HMAC-SHA256 identique à licence_service.dart
+  const enc = new TextEncoder();
+  const keyData = enc.encode(SALT);
+  const msgData = enc.encode("SAMA-LICENCE-" + period);
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
+  const b = new Uint8Array(sig);
+  const num = ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]) & 0x7FFFFFFF;
+  const code = num % 100000;
+  return "SC-" + shortPeriod(period) + "-" + String(code).padStart(5, "0");
+}
+
+function getPeriodKey(plan, deviceId, year) {
+  const now = new Date();
+  const month = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+  const did = deviceId ? deviceId.trim() : "";
+  // TOUS les codes sont liés au deviceId
+  if (plan === "annual")  return "ANNUAL-"  + (year || now.getFullYear()) + "-" + did;
+  if (plan === "trial15min") return "TRIAL15MIN-" + month + "-" + did;
+  if (plan === "trial3h") return "TRIAL3H-" + month + "-" + did;
+  if (plan === "trial1")  return "TRIAL1-"  + month + "-" + did;
+  if (plan === "trial5")  return "TRIAL5-"  + month + "-" + did;
+  if (plan === "trial10") return "TRIAL10-" + month + "-" + did;
+  if (plan === "trial15") return "TRIAL15-" + month + "-" + did;
+  return month + "-" + did;
+}
+
+function getExpiry(plan, year) {
+  const d = new Date();
+  if (plan === "annual") { d.setFullYear(parseInt(year || d.getFullYear()) + 1); }
+  else if (plan === "trial15min") { d.setMinutes(d.getMinutes() + 15); }
+  else if (plan === "trial3h") { d.setHours(d.getHours() + 3); }
+  else if (plan === "trial1")  { d.setHours(d.getHours() + 24); }
+  else if (plan === "trial5")  { d.setDate(d.getDate() + 5); }
+  else if (plan === "trial10") { d.setDate(d.getDate() + 10); }
+  else if (plan === "trial15") { d.setDate(d.getDate() + 15); }
+  else { d.setMonth(d.getMonth() + 1); }
+  return d.toLocaleDateString("fr-FR");
+}
+
+function toggleYear() {
+  document.getElementById("yearDiv").style.display =
+    document.getElementById("genPlan").value === "annual" ? "block" : "none";
+}
+
+// ── GENERER CODE ────────────────────────────────────────
+async function generateCode() {
+  const name = document.getElementById("genName").value.trim();
+  const phone = document.getElementById("genPhone").value.trim();
+  const plan = document.getElementById("genPlan").value;
+  const payment = document.getElementById("genPayment").value;
+  const deviceId = document.getElementById("genDeviceId").value.trim();
+  const notes = document.getElementById("genNotes").value.trim();
+  const year = document.getElementById("genYear")?.value;
+
+  if (!name || !phone) { showAlert("genErr","⚠️ Nom et telephone obligatoires"); return; }
+  if (!deviceId) { showAlert("genErr","⚠️ ID telephone obligatoire pour tous les plans"); return; }
+  if (deviceId.length < 5) { showAlert("genErr","⚠️ ID telephone invalide (trop court)"); return; }
+
+  // Nonce basé sur timestamp — TOUJOURS unique
+  // Compteur global persistant — TOUJOURS unique
+  let globalCounter = parseInt(localStorage.getItem("sc_global_counter") || "0");
+  globalCounter++;
+  localStorage.setItem("sc_global_counter", globalCounter.toString());
+  const nonce = globalCounter > 1 ? "-R" + globalCounter : "";
+  const period = getPeriodKey(plan, deviceId, year) + nonce;
+  const code = await genCode(period);
+  const priceMap = {annual:"50 000", monthly:"5 000", trial15min:"0", trial3h:"0", trial1:"0", trial5:"0", trial10:"0", trial15:"0"};
+  const labelMap = {annual:"Annuel", monthly:"Mensuel", trial15min:"Test 15min", trial3h:"Test 3h", trial1:"Test 24h", trial5:"Test 5 jours", trial10:"Test 10 jours", trial15:"Test 15 jours"};
+  const price = priceMap[plan] || "5 000";
+  const planLabel = labelMap[plan] || "Mensuel";
+  const expiry = getExpiry(plan, year);
+  const payLabel = {wave:"Wave",orange:"Orange Money",cash:"Cash"}[payment];
+
+  // Sauvegarder
+  const clients = getData("clients", []);
+  const ei = clients.findIndex(c => c.phone === phone);
+  const cd = { id: ei>=0?clients[ei].id:Date.now(), name, phone, plan, payment:payLabel, notes,
+    status:"active", createdAt:ei>=0?clients[ei].createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString() };
+  if (ei>=0) clients[ei]=cd; else clients.unshift(cd);
+  setData("clients", clients);
+
+  const codes = getData("codes", []);
+  codes.unshift({ id:Date.now(), clientName:name, clientPhone:phone, code, plan:planLabel,
+    price, payment:payLabel, deviceId, expiry, generatedAt:new Date().toISOString(), notes });
+  setData("codes", codes);
+
+  document.getElementById("resultCode").textContent = code;
+  const msg = `Bonjour ${name} !
+
+Merci pour votre abonnement Sama Commerce.
+
+Code d'activation :
+${code}
+
+Comment activer :
+1. Ouvrez Sama Commerce
+2. Menu Licence
+3. Entrez ce code
+4. Appuyez sur Activer
+
+Plan : ${planLabel}
+Montant : ${price} FCFA
+Valable jusqu'au : ${expiry}
+Paiement : ${payLabel}
+
+Merci 🙏`;
+  document.getElementById("resultMsg").textContent = msg;
+  document.getElementById("resultSection").classList.add("show");
+  window._genCode = code; window._genMsg = msg;
+  window._genPhone = phone.replace(/\s/g,"");
+  document.getElementById("resultSection").scrollIntoView({behavior:"smooth"});
+
+  showToast("Code genere ! Retour dans 8s...");
+  setTimeout(() => {
+    ["genName","genPhone","genDeviceId","genNotes"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("genPlan").value = "monthly";
+    document.getElementById("genPayment").value = "wave";
+    document.getElementById("resultSection").classList.remove("show");
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById("page-dashboard").classList.add("active");
+    document.querySelectorAll(".nav-btn")[0].classList.add("active");
+    refreshDashboard(); window.scrollTo({top:0,behavior:"smooth"});
+  }, 8000);
+}
+
+function copyCode() { navigator.clipboard.writeText(window._genCode).then(() => showToast("Code copie")); }
+function copyMsg() { navigator.clipboard.writeText(window._genMsg).then(() => showToast("Message copie")); }
+function openWhatsApp() { window.open("https://wa.me/"+window._genPhone+"?text="+encodeURIComponent(window._genMsg),"_blank"); }
+
+// ── CLIENTS ─────────────────────────────────────────────
+function renderClients(filter) {
+  let clients = getData("clients",[]);
+  if (filter) { const f=filter.toLowerCase(); clients=clients.filter(c=>c.name.toLowerCase().includes(f)||c.phone.includes(f)); }
+  const codes = getData("codes",[]);
+  const el = document.getElementById("clientsTable");
+  if (!clients.length) { el.innerHTML='<div class="empty">Aucun client</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Client</th><th>Plan</th><th>Statut</th><th>Codes</th><th>Actions</th></tr></thead><tbody>
+    ${clients.map(c => {
+      const n = codes.filter(x=>x.clientPhone===c.phone).length;
+      const sb = {active:"badge-green",trial:"badge-yellow",expired:"badge-red"}[c.status]||"badge-yellow";
+      const sl = {active:"Actif",trial:"Essai",expired:"Expire"}[c.status]||c.status;
+      return `<tr>
+        <td><strong>${c.name}</strong><br><span style="color:#8B6914;font-size:11px">${c.phone}</span></td>
+        <td><span class="tag badge-blue">${c.plan==="annual"?"Annuel":"Mensuel"}</span></td>
+        <td><span class="badge ${sb}">${sl}</span></td>
+        <td style="text-align:center"><strong>${n}</strong></td>
+        <td>
+          <button class="btn btn-sm" style="background:#E6F7F1;color:#007A3D;margin-right:4px" onclick="showHistory('${c.phone}','${c.name}')">Hist.</button>
+          <button class="btn btn-sm" style="background:#FFF8E6;color:#8B6914;margin-right:4px" onclick="genForClient('${c.phone}','${c.name}')">Code</button>
+          <button class="btn btn-sm" style="background:#FFEBE9;color:#CE1126" onclick="deleteClient('${c.id}')">Sup.</button>
+        </td></tr>`;
+    }).join("")}</tbody></table>`;
+}
+
+function filterClients() { renderClients(document.getElementById("searchInput").value); }
+function showAddClient() { document.getElementById("addClientForm").style.display="block"; }
+function hideAddClient() { document.getElementById("addClientForm").style.display="none"; }
+
+function addClient() {
+  const name=document.getElementById("addName").value.trim();
+  const phone=document.getElementById("addPhone").value.trim();
+  if (!name||!phone) { alert("Nom et telephone requis"); return; }
+  const clients=getData("clients",[]);
+  clients.unshift({ id:Date.now(), name, phone,
+    plan:document.getElementById("addPlan").value,
+    status:document.getElementById("addStatus").value,
+    notes:document.getElementById("addNote").value.trim(),
+    payment:"", createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+  setData("clients",clients); hideAddClient(); renderClients(); showToast("Client ajoute");
+}
+
+function deleteClient(id) {
+  if (!confirm("Supprimer ce client ?")) return;
+  setData("clients", getData("clients",[]).filter(c=>c.id!=id));
+  renderClients(); refreshDashboard();
+}
+
+function genForClient(phone, name) {
+  document.getElementById("genPhone").value=phone;
+  document.getElementById("genName").value=name;
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-generate").classList.add("active");
+  document.querySelectorAll(".nav-btn")[1].classList.add("active");
+}
+
+function showHistory(phone, name) {
+  const codes=getData("codes",[]).filter(c=>c.clientPhone===phone);
+  document.getElementById("historyName").textContent=name;
+  const el=document.getElementById("historyTable");
+  if (!codes.length) { el.innerHTML='<div class="empty">Aucun code</div>'; }
+  else {
+    el.innerHTML=`<table><thead><tr><th>Code</th><th>Plan</th><th>Paiement</th><th>Expire</th><th>Date</th></tr></thead><tbody>
+      ${codes.map(c=>`<tr>
+        <td><code style="font-size:13px;font-weight:700;color:#003D1F;letter-spacing:1px">${c.code}</code></td>
+        <td><span class="badge badge-blue">${c.plan}</span></td>
+        <td>${c.payment}</td><td>${c.expiry}</td>
+        <td style="color:#8B6914;font-size:11px">${new Date(c.generatedAt).toLocaleDateString("fr-FR")}</td>
+      </tr>`).join("")}</tbody></table>`;
+  }
+  document.getElementById("historyCard").style.display="block";
+  document.getElementById("historyCard").scrollIntoView({behavior:"smooth"});
+}
+function hideHistory() { document.getElementById("historyCard").style.display="none"; }
+
+// ── DASHBOARD ────────────────────────────────────────────
+function refreshDashboard() {
+  const clients=getData("clients",[]);
+  const codes=getData("codes",[]);
+  const now=new Date();
+  const month=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+
+  document.getElementById("statTotal").textContent=clients.length;
+  document.getElementById("statActifs").textContent=clients.filter(c=>c.status==="active").length;
+  document.getElementById("infoClients").textContent=clients.length;
+  document.getElementById("infoCodes").textContent=codes.length;
+
+  const rev=codes.filter(c=>c.generatedAt&&c.generatedAt.startsWith(month))
+    .reduce((s,c)=>s+(c.plan==="Annuel"?50000:5000),0);
+  document.getElementById("statRevenu").textContent=rev.toLocaleString("fr-FR");
+
+  const recentEl=document.getElementById("recentTable");
+  recentEl.innerHTML = !codes.length ? '<div class="empty">Aucun code</div>' :
+    `<table><thead><tr><th>Client</th><th>Code</th><th>Plan</th><th>Date</th></tr></thead><tbody>
+    ${codes.slice(0,10).map(c=>`<tr>
+      <td><strong>${c.clientName}</strong><br><span style="color:#8B6914;font-size:11px">${c.clientPhone}</span></td>
+      <td><code style="font-size:12px;font-weight:700;color:#003D1F">${c.code}</code></td>
+      <td><span class="badge badge-blue">${c.plan}</span></td>
+      <td style="color:#8B6914;font-size:11px">${new Date(c.generatedAt).toLocaleDateString("fr-FR")}</td>
+    </tr>`).join("")}</tbody></table>`;
+
+  const expiring=clients.filter(c=>{
+    const cc=codes.filter(x=>x.clientPhone===c.phone);
+    if (!cc.length) return false;
+    const [d,m,y]=cc[0].expiry.split("/");
+    const diff=(new Date(y,m-1,d)-now)/86400000;
+    return diff>=0&&diff<=7;
+  });
+  const renewEl=document.getElementById("renewTable");
+  renewEl.innerHTML = !expiring.length ? '<div class="empty">Aucun renouvellement imminent</div>' :
+    `<table><thead><tr><th>Client</th><th>Tel</th><th>Expire</th><th>Action</th></tr></thead><tbody>
+    ${expiring.map(c=>{
+      const last=codes.filter(x=>x.clientPhone===c.phone)[0];
+      return `<tr><td><strong>${c.name}</strong></td><td>${c.phone}</td>
+        <td><span class="badge badge-red">${last?.expiry||"-"}</span></td>
+        <td><button class="btn btn-sm btn-green" onclick="genForClient('${c.phone}','${c.name}')">Renouveler</button></td>
+      </tr>`;
+    }).join("")}</tbody></table>`;
+}
+
+// ── MOT DE PASSE ─────────────────────────────────────────
+function checkStrength() {
+  const pwd=document.getElementById("newPwd").value;
+  const bar=document.getElementById("strengthBar");
+  const lbl=document.getElementById("strengthLabel");
+  if (!pwd) { bar.style.background="#E8D5A0"; bar.style.width="0"; lbl.textContent=""; return; }
+  let score=0;
+  if (pwd.length>=8) score++;
+  if (pwd.length>=12) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  const colors=["#CE1126","#F0C500","#F0C500","#007A3D","#007A3D"];
+  const labels=["Tres faible","Faible","Moyen","Fort","Tres fort"];
+  bar.style.background=colors[score-1]||"#CE1126";
+  bar.style.width=(score*20)+"%";
+  lbl.textContent=labels[score-1]||"";
+}
+
+async function changePwd() {
+  const old=document.getElementById("oldPwd").value;
+  const nw=document.getElementById("newPwd").value;
+  const conf=document.getElementById("confirmPwd").value;
+  document.getElementById("pwdErr").classList.remove("show");
+  document.getElementById("pwdOk").classList.remove("show");
+
+  const stored=getPwdHash();
+  let valid = stored.startsWith("legacy:")
+    ? hashLegacy(old)===stored.slice(7)
+    : await verifyPwd(old, stored);
+
+  if (!valid) { showAlert("pwdErr","❌ Mot de passe actuel incorrect"); return; }
+  if (nw.length<8) { showAlert("pwdErr","⚠️ Minimum 8 caracteres"); return; }
+  if (nw!==conf) { showAlert("pwdErr","⚠️ Mots de passe differents"); return; }
+
+  const newHash = await hashPwd(nw, null);
+  setData("adminPwdHash", newHash);
+  showAlert("pwdOk","✅ Mot de passe mis a jour (PBKDF2)");
+  ["oldPwd","newPwd","confirmPwd"].forEach(id=>document.getElementById(id).value="");
+}
+
+// ── IMPORT/EXPORT ────────────────────────────────────────
+function exportData() {
+  const data={clients:getData("clients",[]),codes:getData("codes",[]),exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="sama_admin_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();
+}
+
+function importData(e) {
+  const file=e.target.files[0]; if (!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try {
+      const d=JSON.parse(ev.target.result);
+      if (d.clients) setData("clients",d.clients);
+      if (d.codes) setData("codes",d.codes);
+      refreshAll(); showToast("Donnees importees");
+    } catch { alert("Fichier invalide"); }
+  };
+  reader.readAsText(file);
+}
+
+function clearData() {
+  if (!confirm("Effacer TOUT ?")) return;
+  localStorage.removeItem("clients"); localStorage.removeItem("codes");
+  refreshAll(); showToast("Donnees effacees");
+}
+
+// ── NAVIGATION ───────────────────────────────────────────
+function showPage(e, name) {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-"+name).classList.add("active");
+  e.target.classList.add("active");
+  if (name==="clients") renderClients();
+  if (name==="dashboard") refreshDashboard();
+}
+
+// ── UTILS ─────────────────────────────────────────────────
+function refreshAll() { refreshDashboard(); renderClients(); }
+
+function showAlert(id, msg) {
+  const el=document.getElementById(id);
+  el.textContent=msg; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),5000);
+}
+
+function showToast(msg) {
+  const t=document.createElement("div");
+  t.style.cssText="position:fixed;bottom:24px;right:24px;background:#003D1F;color:white;padding:12px 20px;border-radius:12px;font-weight:700;font-size:13px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.3)";
+  t.textContent="✓ "+msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+
+function emergencyReset() {
+  const pwd = prompt("Entrez le mot de passe maitre:");
+  if (pwd === "SAMA_RESET_2026") {
+    localStorage.removeItem("adminPwdHash");
+    localStorage.removeItem("totpSecret");
+    localStorage.removeItem("loginAttempts");
+    alert("Reset effectue. Mot de passe: samaadmin2026");
+    location.reload();
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────
+// Forcer affichage login au demarrage
+document.getElementById("loginForm").style.display = "block";
+document.getElementById("lockScreen").style.display = "none";
+document.getElementById("step1").style.display = "block";
+document.getElementById("step2").style.display = "none";
+document.getElementById("sessionInfo").textContent =
+  "Connexion securisee — " + new Date().toLocaleDateString("fr-FR");
+
+// Verifier si bloque au demarrage
+window.addEventListener("load", () => {
+  const locked = isLocked();
+  if (locked) showLock("Compte bloque. Attendez quelques minutes.");
+  updateAttemptBar();
+});
+
+// Verifier session existante
+if (sessionStorage.getItem("auth")==="1") {
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("appPage").style.display="block";
+  const loginAt = sessionStorage.getItem("loginAt");
+  document.getElementById("sessionDetail").textContent = loginAt ? "Connecte le "+loginAt : "";
+  refreshAll();
+}
+</script>
+</body>
+</html>
