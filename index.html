@@ -803,23 +803,25 @@ async function generateCode() {
   document.getElementById("resultCode").textContent = code;
   const msg = `Bonjour ${name} !
 
-Merci pour votre abonnement Sama Commerce.
+Merci pour votre abonnement SAMA COMMERCE 🛒
 
-Code d'activation :
-${code}
+Votre code d'activation :
 
-Comment activer :
-1. Ouvrez Sama Commerce
-2. Menu Licence
-3. Entrez ce code
-4. Appuyez sur Activer
+*${code}*
 
-Plan : ${planLabel}
-Montant : ${price} FCFA
-Valable jusqu'au : ${expiry}
-Paiement : ${payLabel}
+Pour activer :
+1. Ouvrez SAMA COMMERCE
+2. Allez dans *Menu > Licence*
+3. Collez ce code
+4. Appuyez sur *Activer*
 
-Merci 🙏`;
+📋 Plan : ${planLabel}
+💰 Montant : ${price} FCFA
+📅 Valable jusqu'au : ${expiry}
+💳 Paiement : ${payLabel}
+
+Merci de votre confiance 🙏
+_Support : répondez à ce message_`;
   document.getElementById("resultMsg").textContent = msg;
   document.getElementById("resultSection").classList.add("show");
   window._genCode = code; window._genMsg = msg;
