@@ -243,7 +243,9 @@ tr:hover td{background:#FFFDF5}
           <div class="code-box" id="resultCode"></div>
           <div class="row">
             <button class="btn btn-orange" onclick="copyCode()">📋 Copier le code</button>
-            <button class="btn btn-green" onclick="copyMsg()">📱 Copier WhatsApp</button>
+            <button class="btn btn-green" onclick="copyMsg()">📱 Copier message</button>
+            <button class="btn btn-green" onclick="openWhatsApp()">📤 Envoyer message</button>
+            <button class="btn" style="background:#25D366;color:white" onclick="openWhatsAppCode()">🔑 Envoyer le code</button>
           </div>
           <div class="msg-box" id="resultMsg"></div>
           <button class="btn btn-blue btn-full" style="margin-top:12px" onclick="openWhatsApp()">📲 Ouvrir WhatsApp</button>
@@ -805,14 +807,10 @@ async function generateCode() {
 
 Merci pour votre abonnement SAMA COMMERCE 🛒
 
-Votre code d'activation :
-
-*${code}*
-
-Pour activer :
+Pour activer votre licence :
 1. Ouvrez SAMA COMMERCE
 2. Allez dans *Menu > Licence*
-3. Collez ce code
+3. Entrez le code que vous allez recevoir
 4. Appuyez sur *Activer*
 
 📋 Plan : ${planLabel}
@@ -822,9 +820,14 @@ Pour activer :
 
 Merci de votre confiance 🙏
 _Support : répondez à ce message_`;
+  const msgCode = `Votre code d'activation SAMA COMMERCE :
+
+*${code}*
+
+👆 Appuyez longuement sur ce message puis "Copier" pour l'activer.`;
   document.getElementById("resultMsg").textContent = msg;
   document.getElementById("resultSection").classList.add("show");
-  window._genCode = code; window._genMsg = msg;
+  window._genCode = code; window._genMsg = msg; window._genMsgCode = msgCode;
   window._genPhone = phone.replace(/\s/g,"");
   document.getElementById("resultSection").scrollIntoView({behavior:"smooth"});
 
@@ -845,6 +848,7 @@ _Support : répondez à ce message_`;
 function copyCode() { navigator.clipboard.writeText(window._genCode).then(() => showToast("Code copie")); }
 function copyMsg() { navigator.clipboard.writeText(window._genMsg).then(() => showToast("Message copie")); }
 function openWhatsApp() { window.open("https://wa.me/"+window._genPhone+"?text="+encodeURIComponent(window._genMsg),"_blank"); }
+function openWhatsAppCode() { window.open("https://wa.me/"+window._genPhone+"?text="+encodeURIComponent(window._genMsgCode),"_blank"); }
 
 // ── CLIENTS ─────────────────────────────────────────────
 function renderClients(filter) {
