@@ -174,6 +174,7 @@ tr:hover td{background:#FFFDF5}
       <button class="nav-btn" onclick="showPage(event,'generate')">🔑 Generer code</button>
       <button class="nav-btn" onclick="showPage(event,'clients')">👥 Clients</button>
       <button class="nav-btn" onclick="showPage(event,'settings')">⚙️ Parametres</button>
+      <button class="nav-btn" onclick="showPage(event,'resetpin')">🔓 Reset PIN admin</button>
     </div>
 
     <!-- DASHBOARD -->
@@ -333,6 +334,25 @@ tr:hover td{background:#FFFDF5}
       </div>
     </div>
 
+    <!-- RESET PIN ADMIN -->
+    <div class="page" id="page-resetpin">
+      <div class="card">
+        <h2>🔓 Reinitialiser PIN admin client</h2>
+        <p style="font-size:12px;color:#5C6B62;margin-bottom:12px">
+          Le code genere est valable 24h et lie a l'ID appareil du client.
+        </p>
+        <div class="alert alert-err" id="resetPinErr"></div>
+        <label>ID appareil (deviceId)</label>
+        <input type="text" id="resetPinDeviceId" placeholder="Colle l'ID appareil du client">
+        <button class="btn btn-green btn-full" onclick="generatePinResetCode()">Generer le code</button>
+        <div id="resetPinResult" style="display:none;margin-top:16px;padding:14px;background:#F0F7F3;border-radius:10px">
+          <div style="font-size:12px;color:#5C6B62;margin-bottom:6px">Code de reinitialisation</div>
+          <div id="resetPinCode" style="font-size:22px;font-weight:800;color:#007A3D;letter-spacing:1px"></div>
+          <div style="font-size:11px;color:#5C6B62;margin-top:8px" id="resetPinExpiry"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -341,6 +361,10 @@ tr:hover td{background:#FFFDF5}
 // Salt dispersé identique au Dart
 const _s1="S4M",_s2="A_C",_s3="0M3",_s4="RC3",_s5="_2K",_s6="26X";
 const SALT = _s1+_s2+_s3+_s4+_s5+_s6;
+
+// Salt SEPARE pour le reset PIN admin (jamais utilise pour l'activation)
+const _r1="P1N_",_r2="R3S3",_r3="T_S4",_r4="M4_2",_r5="K26Z";
+const PIN_RESET_SALT = _r1+_r2+_r3+_r4+_r5;
 const MAX_ATTEMPTS = 5;
 const LOCK_DURATION = 15 * 60 * 1000; // 15 minutes
 const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2h
@@ -1036,6 +1060,39 @@ function clearData() {
   if (!confirm("Effacer TOUT ?")) return;
   localStorage.removeItem("clients"); localStorage.removeItem("codes");
   refreshAll(); showToast("Donnees effacees");
+}
+
+
+
+// ── RESET PIN ADMIN (secret separe, expiration 24h) ────
+async function genPinResetCode(deviceId, expiryEpochSeconds) {
+  const enc = new TextEncoder();
+  const keyData = enc.encode(PIN_RESET_SALT);
+  const expiryB36 = expiryEpochSeconds.toString(36);
+  const msgData = enc.encode("SAMA-PINRESET-" + deviceId + "-" + expiryB36);
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
+  const b = new Uint8Array(sig);
+  const num = ((b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3]) & 0x7FFFFFFF;
+  const code = num % 100000;
+  return "PR-" + expiryB36 + "-" + String(code).padStart(5, "0");
+}
+
+async function generatePinResetCode() {
+  const deviceId = document.getElementById("resetPinDeviceId").value.trim();
+  if (!deviceId) {
+    showAlert("resetPinErr", "⚠️ ID appareil obligatoire");
+    return;
+  }
+  const expiryMs = Date.now() + 24 * 60 * 60 * 1000;
+  const expiryEpochSeconds = Math.floor(expiryMs / 1000);
+  const code = await genPinResetCode(deviceId, expiryEpochSeconds);
+  document.getElementById("resetPinCode").textContent = code;
+  document.getElementById("resetPinExpiry").textContent =
+    "Valable jusqu'au " + new Date(expiryMs).toLocaleString("fr-FR");
+  document.getElementById("resetPinResult").style.display = "block";
 }
 
 // ── NAVIGATION ───────────────────────────────────────────
